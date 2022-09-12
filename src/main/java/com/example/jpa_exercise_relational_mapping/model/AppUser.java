@@ -1,6 +1,8 @@
 package com.example.jpa_exercise_relational_mapping.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +25,9 @@ public class AppUser {
     @JoinColumn(name = "address_id", referencedColumnName = "addressId")
     private Address address;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
+    private Collection<Car> ownedCars;
+
     protected AppUser() {
     }
 
@@ -38,6 +43,33 @@ public class AppUser {
         this.password = password;
         this.address = address;
     }
+
+
+    //Custom method
+    public void addCar(Car car){
+        if (car == null){
+            throw new IllegalArgumentException("Invalid parameter: Car was null");
+        }
+        if (ownedCars == null){
+            ownedCars = new ArrayList<>();
+        }
+        ownedCars.add(car);
+        car.setOwner(this);
+    }
+
+    public void removeCar(Car car){
+        if (car == null){
+            throw new IllegalArgumentException("Invalid parameter: Car was null");
+        }
+        if (ownedCars != null) {
+
+            if (ownedCars.contains(car)) {
+                ownedCars.remove(car);
+                car.setOwner(null);
+            }
+        }
+    }
+
 
     public int getUserId() {
         return userId;
@@ -79,6 +111,13 @@ public class AppUser {
         this.address = address;
     }
 
+    public Collection<Car> getOwnedCars() {
+        return ownedCars;
+    }
+
+    public void setOwnedCars(Collection<Car> ownedCars) {
+        this.ownedCars = ownedCars;
+    }
 
     @Override
     public boolean equals(Object o) {
