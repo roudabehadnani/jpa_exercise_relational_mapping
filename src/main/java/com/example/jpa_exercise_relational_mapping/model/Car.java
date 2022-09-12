@@ -4,6 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -27,6 +28,9 @@ public class Car {
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "user_id")
     private AppUser owner;
+
+    @ManyToMany(mappedBy = "cars")
+    private Collection<Status> statusCodes;
 
     public Car() {
     }
@@ -80,6 +84,14 @@ public class Car {
 
     public void setOwner(AppUser owner) {
         this.owner = owner;
+    }
+
+    public Collection<Status> getStatusCodes() {
+        return statusCodes;
+    }
+
+    public void setStatusCodes(Collection<Status> statusCodes) {
+        this.statusCodes = statusCodes;
     }
 
     @Override
