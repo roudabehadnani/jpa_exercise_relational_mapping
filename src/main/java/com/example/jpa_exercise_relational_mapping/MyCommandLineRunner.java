@@ -13,10 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.SecondaryTable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
 
 @Transactional
 @Component

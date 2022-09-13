@@ -21,7 +21,7 @@ public class AppUser {
     @Column(length = 100, nullable = false)
     private String password;
 
-    @OneToOne(cascade = CascadeType.PERSIST )
+    @ManyToOne(cascade = CascadeType.PERSIST )
     @JoinColumn(name = "address_id", referencedColumnName = "addressId")
     private Address address;
 
