@@ -1,6 +1,7 @@
 package com.example.jpa_exercise_relational_mapping.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -14,14 +15,33 @@ public class Status {
     @Column(length = 150, nullable = false)
     private String statusCode;
 
-    @ManyToMany
-    private Collection<Car> cars;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Collection<Car> cars = new ArrayList<>();
 
     public Status() {
     }
 
     public Status(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public void addCar(Car car){
+        if (car ==  null){
+            throw  new IllegalArgumentException("Invalid parameter: Car was null");
+        }
+        if (cars == null){
+            cars = new ArrayList<>();
+        }
+        cars.add(car);
+        car.getStatusCodes().add(this);
+    }
+
+    public void removeCar(Car car){
+        if (car == null){
+            throw new IllegalArgumentException("Invalid parameter: Car was null");
+        }
+        car.getStatusCodes().remove(this);
+        cars.remove(car);
     }
 
     public int getStatusId() {

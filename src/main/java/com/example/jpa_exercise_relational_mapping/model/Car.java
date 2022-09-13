@@ -4,6 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -29,8 +30,9 @@ public class Car {
     @JoinColumn(name = "user_id")
     private AppUser owner;
 
-    @ManyToMany(mappedBy = "cars")
-    private Collection<Status> statusCodes;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            mappedBy = "cars")
+    private Collection<Status> statusCodes = new ArrayList<>();
 
     public Car() {
     }
@@ -44,6 +46,25 @@ public class Car {
     public Car(String regNumber, String brand) {
         this.regNumber = regNumber;
         this.brand = brand;
+    }
+
+    public void addStatus(Status status){
+        if (status == null){
+            throw new IllegalArgumentException("Invalid parameter: Status was null");
+        }
+        if (statusCodes == null){
+            statusCodes = new ArrayList<>();
+        }
+        statusCodes.add(status);
+        status.getCars().add(this);
+    }
+
+    public void removeStatus(Status status){
+        if (status == null){
+            throw new IllegalArgumentException("Invalid parameter: Status was null");
+        }
+        status.getCars().remove(this);
+        statusCodes.remove(status);
     }
 
     public int getCarId() {
@@ -115,6 +136,7 @@ public class Car {
                 ", brand='" + brand + '\'' +
                 ", regDate=" + regDate +
                 ", owner=" + owner +
+                ", statusCodes=" + statusCodes +
                 '}';
     }
 }

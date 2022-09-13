@@ -2,29 +2,37 @@ package com.example.jpa_exercise_relational_mapping;
 
 import com.example.jpa_exercise_relational_mapping.dao.AppUserDAO;
 import com.example.jpa_exercise_relational_mapping.dao.CarDAO;
+import com.example.jpa_exercise_relational_mapping.dao.StatusDAO;
 import com.example.jpa_exercise_relational_mapping.model.Address;
 import com.example.jpa_exercise_relational_mapping.model.AppUser;
 import com.example.jpa_exercise_relational_mapping.model.Car;
+import com.example.jpa_exercise_relational_mapping.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.SecondaryTable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 @Transactional
 @Component
 public class MyCommandLineRunner implements CommandLineRunner {
 
     @Autowired
-    public MyCommandLineRunner(AppUserDAO appUserDAO, CarDAO carDAO, EntityManager entityManager) {
+    public MyCommandLineRunner(AppUserDAO appUserDAO, CarDAO carDAO, StatusDAO statusDAO, EntityManager entityManager) {
         this.appUserDAO = appUserDAO;
         this.carDAO = carDAO;
+        this.statusDAO = statusDAO;
         this.entityManager = entityManager;
     }
 
     private final AppUserDAO appUserDAO;
     private final CarDAO carDAO;
+    private final StatusDAO statusDAO;
     private final EntityManager entityManager;
 
     @Override
@@ -61,6 +69,42 @@ public class MyCommandLineRunner implements CommandLineRunner {
         soheil.addCar(bmw);
         entityManager.flush();
         soheil.getOwnedCars().forEach(System.out::println);
+
+
+        System.out.println("-------Save Status---------");
+        Status status1 = statusDAO.save(new Status("Out of Service"));
+        Status status2 = statusDAO.save(new Status("Clear and Available"));
+        Status status3 = statusDAO.save(new Status("At Transporting Destination"));
+
+
+        volvo.addStatus(status1);
+        bmw.addStatus(status1);
+        skoda.addStatus(status2);
+        bmw.addStatus(status3);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
