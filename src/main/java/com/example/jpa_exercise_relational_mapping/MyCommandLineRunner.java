@@ -7,24 +7,28 @@ import com.example.jpa_exercise_relational_mapping.model.Address;
 import com.example.jpa_exercise_relational_mapping.model.AppUser;
 import com.example.jpa_exercise_relational_mapping.model.Car;
 import com.example.jpa_exercise_relational_mapping.model.Status;
+import com.example.jpa_exercise_relational_mapping.repository.AppUserRepository;
 import com.example.jpa_exercise_relational_mapping.repository.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Transactional
 @Component
 public class MyCommandLineRunner implements CommandLineRunner {
 
     @Autowired
-    public MyCommandLineRunner(AppUserDAO appUserDAO, CarDAO carDAO, StatusDAO statusDAO, StatusRepository statusRepo, EntityManager entityManager) {
+    public MyCommandLineRunner(AppUserDAO appUserDAO, CarDAO carDAO, StatusDAO statusDAO, StatusRepository statusRepo, AppUserRepository appUserRepo, EntityManager entityManager) {
         this.appUserDAO = appUserDAO;
         this.carDAO = carDAO;
         this.statusDAO = statusDAO;
         this.statusRepo = statusRepo;
+        this.appUserRepo = appUserRepo;
         this.entityManager = entityManager;
     }
 
@@ -32,6 +36,7 @@ public class MyCommandLineRunner implements CommandLineRunner {
     private final CarDAO carDAO;
     private final StatusDAO statusDAO;
     private final StatusRepository statusRepo;
+    private final AppUserRepository appUserRepo;
     private final EntityManager entityManager;
 
     @Override
@@ -39,21 +44,25 @@ public class MyCommandLineRunner implements CommandLineRunner {
 
         AppUser roudabeh = new AppUser("rod@gmail.com", "Roudabe Ad", "123ra");
         AppUser soheil = new AppUser("soheil@gmail.com", "Soheil kei", "lok987");
+        AppUser johan = new AppUser("johan@gmail.com", "Johan Anders", "lkrv98");
 
         roudabeh = appUserDAO.save(roudabeh);
         soheil = appUserDAO.save(soheil);
+        johan = appUserDAO.save(johan);
 
         Address address = new Address("Minervävagen20","38951", "Karlskrona");
-        Address address1 = new Address("Leckeby","25843", "Karlskrona");
+        Address address1 = new Address("Leckeby","25843", "Karlshamn");
 
         roudabeh.setAddress(address);
         soheil.setAddress(address1);
+        johan.setAddress(address);
 
         entityManager.flush();
 
         System.out.println("-------Print---------");
         System.out.println(roudabeh);
         System.out.println(soheil);
+        System.out.println(johan);
 
         System.out.println("-------Save Cars---------");
         Car volvo = carDAO.save( new Car("AFR 124", "Volvo"));
@@ -81,9 +90,25 @@ public class MyCommandLineRunner implements CommandLineRunner {
         skoda.addStatus(status2);
         bmw.addStatus(status3);
 
-        System.out.println("-------CRUDRepository---------");
-        ;
+        System.out.println("-------StatusRepository---------");
+
         System.out.println(statusRepo.count());
+
+        System.out.println("-------AppUserRepository---------");
+//        AppUser foundEmail = appUserRepo.findByEmailIgnoreCase("soheil@gmail.com");
+//        System.out.println(foundEmail);
+
+//        AppUser foundEmailANDPass = appUserRepo.findByEmailANDPass("soheil@gmail.com","lok987");
+//        System.out.println(foundEmailANDPass);
+
+        List<AppUser> foundName = appUserRepo.findByName("dabe");
+        foundName.forEach(System.out::println);
+
+        List<AppUser> foundByAddress= appUserRepo.findAppUsersByAddress(address);
+        foundByAddress.forEach(System.out::println);
+
+        List<AppUser> foundByCity = appUserRepo.findAppUsersByAddressCityIsContainingIgnoreCase("karlskrona");
+        foundByCity.forEach(System.out::println);
 
 
 
