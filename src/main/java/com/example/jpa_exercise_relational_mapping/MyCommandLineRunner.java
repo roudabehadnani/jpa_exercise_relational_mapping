@@ -7,6 +7,7 @@ import com.example.jpa_exercise_relational_mapping.model.Address;
 import com.example.jpa_exercise_relational_mapping.model.AppUser;
 import com.example.jpa_exercise_relational_mapping.model.Car;
 import com.example.jpa_exercise_relational_mapping.model.Status;
+import com.example.jpa_exercise_relational_mapping.repository.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -19,16 +20,18 @@ import javax.persistence.EntityManager;
 public class MyCommandLineRunner implements CommandLineRunner {
 
     @Autowired
-    public MyCommandLineRunner(AppUserDAO appUserDAO, CarDAO carDAO, StatusDAO statusDAO, EntityManager entityManager) {
+    public MyCommandLineRunner(AppUserDAO appUserDAO, CarDAO carDAO, StatusDAO statusDAO, StatusRepository statusRepo, EntityManager entityManager) {
         this.appUserDAO = appUserDAO;
         this.carDAO = carDAO;
         this.statusDAO = statusDAO;
+        this.statusRepo = statusRepo;
         this.entityManager = entityManager;
     }
 
     private final AppUserDAO appUserDAO;
     private final CarDAO carDAO;
     private final StatusDAO statusDAO;
+    private final StatusRepository statusRepo;
     private final EntityManager entityManager;
 
     @Override
@@ -77,6 +80,11 @@ public class MyCommandLineRunner implements CommandLineRunner {
         bmw.addStatus(status1);
         skoda.addStatus(status2);
         bmw.addStatus(status3);
+
+        System.out.println("-------CRUDRepository---------");
+        ;
+        System.out.println(statusRepo.count());
+
 
 
 
