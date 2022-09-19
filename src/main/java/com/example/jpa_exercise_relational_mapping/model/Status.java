@@ -15,23 +15,24 @@ public class Status {
     @Column(length = 150, nullable = false)
     private String statusCode;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Collection<Car> cars = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,CascadeType.REFRESH})
+    private Collection<Car> cars;
 
     public Status() {
     }
 
     public Status(String statusCode) {
         this.statusCode = statusCode;
+        setCars(new ArrayList<>());
     }
 
     public void addCar(Car car){
         if (car ==  null){
             throw  new IllegalArgumentException("Invalid parameter: Car was null");
         }
-        if (cars == null){
-            cars = new ArrayList<>();
-        }
+//        if (cars == null){
+//            cars = new ArrayList<>();
+//        }
         cars.add(car);
         car.getStatusCodes().add(this);
     }

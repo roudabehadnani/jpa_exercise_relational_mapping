@@ -1,11 +1,11 @@
 package com.example.jpa_exercise_relational_mapping.model;
 
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 @Entity
@@ -22,17 +22,16 @@ public class Car {
     @Column(length = 100, nullable = false)
     private String brand;
 
-    @CreationTimestamp
-    @Column(name = "reg_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column
     private LocalDate regDate;
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "user_id")
     private AppUser owner;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH},
             mappedBy = "cars")
-    private Collection<Status> statusCodes = new ArrayList<>();
+    private Collection<Status> statusCodes;
 
     public Car() {
     }
@@ -41,6 +40,7 @@ public class Car {
         this.regNumber = regNumber;
         this.brand = brand;
         this.regDate = regDate;
+        setStatusCodes(new ArrayList<>());
     }
 
     public Car(String regNumber, String brand) {
@@ -53,10 +53,12 @@ public class Car {
             throw new IllegalArgumentException("Invalid parameter: Status was null");
         }
         if (statusCodes == null){
-            statusCodes = new ArrayList<>();
+            setStatusCodes(new ArrayList<>());
         }
-        statusCodes.add(status);
-        status.getCars().add(this);
+        if (!statusCodes.contains(status)){
+            status.getCars().add(this);
+            statusCodes.add(status);
+        }
     }
 
     public void removeStatus(Status status){
